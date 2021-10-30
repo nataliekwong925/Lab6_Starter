@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  'assets/recipes/creme-brulee.json',
+  'assets/recipes/cake.json',
+  'assets/recipes/tiramisu.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -24,6 +27,9 @@ async function init() {
     console.log('Recipe fetch unsuccessful');
     return;
   };
+
+  console.log("Recipes:", recipeData);
+
   // Add the first three recipe cards to the page
   createRecipeCards();
   // Make the "Show more" button functional
@@ -43,7 +49,20 @@ async function fetchRecipes() {
     // in the recipes folder and fetch them from there. You'll need to add their paths to the recipes array.
 
     // Part 1 Expose - TODO
-  });
+    
+    let len = recipes.length;
+    for(let i = 0; i < len; i++){
+      fetch(recipes[i])
+      .then(response => response.json())
+      .then(data => {
+        recipeData[recipes[i]] = data;
+        if(i==len-1){
+          resolve(true);
+        }
+      }
+      );
+    }
+  })
 }
 
 function createRecipeCards() {
@@ -54,6 +73,17 @@ function createRecipeCards() {
   // show any others you've added when the user clicks on the "Show more" button.
 
   // Part 1 Expose - TODO
+  const og = [
+    'https://introweb.tech/assets/json/ghostCookies.json',
+    'https://introweb.tech/assets/json/birthdayCake.json',
+    'https://introweb.tech/assets/json/chocolateChip.json',
+  ];
+
+  for(let i = 0; i < og.length; i++){
+    let card = document.createElement("recipe-card");
+    card.data = recipeData[og[i]];
+    document.querySelector("main").appendChild(card);
+  }
 }
 
 function bindShowMore() {
@@ -65,4 +95,30 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+  let more = ['assets/recipes/creme-brulee.json', 'assets/recipes/cake.json', 'assets/recipes/tiramisu.json'];
+
+
+  let button = document.querySelector("button");
+  let arrow = document.getElementById("img");
+  button.addEventListener("click", event =>{
+    if(button.innerText == "Show more"){
+      button.innerText = "Show less";
+      for(let i = 0; i < more.length; i++){
+        let card = document.createElement("recipe-card");
+        card.data = recipeData[more[i]];
+        document.querySelector("main").appendChild(card);
+      }
+    }
+    else{
+      button.innerText = "Show more";
+      let main = document.querySelector("main");
+      for(let i = 0; i < more.length; i++){
+        main.removeChild(main.lastChild);
+      }
+    }
+
+  });
+
+
+
 }
